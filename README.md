@@ -25,6 +25,36 @@ Update the Kaggle dataset path to `student-mat.csv` and the Gradio model path to
 
 The Gradio interface lives in the notebook; no separate Streamlit application is included.
 
+## UML diagrams
+
+### Main workflow
+
+The notebook compares regression models and connects the selected Lasso predictor to a Gradio interface. Earlier grades G1 and G2 are available as predictors.
+
+```mermaid
+sequenceDiagram
+    participant Notebook as Student grade notebook
+    participant CSV as Student performance data
+    participant Prep as Feature preparation
+    participant Models as Regression candidates
+    participant UI as Gradio
+    Notebook->>CSV: Read student records
+    CSV-->>Notebook: Features and G3 final grades
+    Notebook->>Prep: Encode and prepare features including G1 and G2
+    Prep-->>Notebook: Model inputs
+    Notebook->>Notebook: Create experiment partitions
+    loop Regression candidates
+        Notebook->>Models: Fit and evaluate
+        Models-->>Notebook: Predictions and regression metrics
+    end
+    Notebook->>Models: Save selected Lasso model
+    Notebook->>UI: Register prediction callback
+    UI->>Prep: Transform submitted feature values
+    Prep-->>UI: Prediction input
+    UI->>Models: Lasso predict
+    Models-->>UI: Estimated final grade
+```
+
 ## Getting started
 
 ```bash
